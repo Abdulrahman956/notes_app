@@ -2,9 +2,9 @@ import 'package:hive/hive.dart';
 
 part 'note_model.g.dart';
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 0) // to specify id of object in database from (0 : 223)
 class NoteModel extends HiveObject {
-  @HiveField(0)
+  @HiveField(0) // to specify id of field in database
   final String title;
   @HiveField(1)
   final String desc;
