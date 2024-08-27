@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:note_app/cubits/add_note_cubit/add_note_cubit.dart';
+import 'package:note_app/cubits/add_note_cubit/add_note_states.dart';
 
 import 'custom_text_form_field.dart';
 
@@ -9,10 +13,24 @@ class CustomBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  const SingleChildScrollView(
+    return  SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: AddNoteForm(),
+        padding: const EdgeInsets.all(20.0),
+        child: BlocConsumer<AddNoteCubit,AddNoteStates>(
+            listener: (context,state){
+                if(state is AddFailureState){
+                  print('Failure ${state.errorMessage}');
+                }
+                if(state is AddSuccessState){
+                  Navigator.pop(context);
+                }
+                
+            },
+            builder:(context,state) {
+              return  ModalProgressHUD(
+                  inAsyncCall: state is AddLoadingState ? true : false,
+                  child: const AddNoteForm());
+            }),
       ),
     );
   }
