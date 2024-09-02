@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:note_app/cubits/add_note_cubit/add_note_cubit.dart';
 import 'package:note_app/cubits/add_note_cubit/add_note_states.dart';
 import 'package:note_app/models/note_model.dart';
 
+import '../cubits/note_cubit/note_cubit.dart';
 import 'custom_bottom.dart';
 import 'custom_text_form_field.dart';
 
@@ -21,6 +23,7 @@ class CustomBottomSheet extends StatelessWidget {
           debugPrint('Failure ${state.errorMessage}');
         }
         if (state is AddSuccessState) {
+          BlocProvider.of<NoteCubit>(context).fetchAllNotes();
           Navigator.pop(context);
         }
       }, builder: (context, state) {
@@ -48,6 +51,7 @@ class _AddNoteFormState extends State<AddNoteForm> {
   AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
   String? title, desc;
   final bool isLoaded = false;
+  DateTime now = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +81,7 @@ class _AddNoteFormState extends State<AddNoteForm> {
             height: 40,
           ),
           BlocBuilder<AddNoteCubit, AddNoteStates>(builder: (context, state) {
+            String formattedDateTime = DateFormat('yyyy-MM-dd').format(now);
             return CustomBottom(
               isLoaded: state is AddLoadingState ? true : false,
               onTap: () {
@@ -85,7 +90,7 @@ class _AddNoteFormState extends State<AddNoteForm> {
                   var noteModel = NoteModel(
                       title: title!,
                       desc: desc!,
-                      date: DateTime.now().toString(),
+                      date: formattedDateTime,
                       color: Colors.orange.value);
                   BlocProvider.of<AddNoteCubit>(context).addNote(noteModel);
                 } else {

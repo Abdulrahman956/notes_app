@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:note_app/models/note_model.dart';
 import 'package:note_app/views/edit_note_view.dart';
 
+import '../cubits/note_cubit/note_cubit.dart';
+
 class CustomNoteItem extends StatelessWidget {
-  const CustomNoteItem({super.key});
+  const CustomNoteItem({super.key, required this.noteModel});
+
+  final NoteModel noteModel;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context){
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
           return const EditNoteView();
         }));
       },
@@ -23,30 +29,33 @@ class CustomNoteItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               ListTile(
-                title: const Text(
-                  "Flutter App",
-                  style: TextStyle(fontSize: 28, color: Colors.black),
+                title: Text(
+                  noteModel.title,
+                  style: const TextStyle(fontSize: 28, color: Colors.black),
                 ),
                 trailing: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      noteModel.delete();
+                      BlocProvider.of<NoteCubit>(context).fetchAllNotes();
+                    },
                     icon: const Icon(
                       Icons.delete,
                       size: 36,
                       color: Colors.black,
                     )),
-                subtitle: const Padding(
-                  padding: EdgeInsets.only(top: 16),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 16),
                   child: Text(
-                    "build my app build my app build my app",
-                    style: TextStyle(fontSize: 16, color: Colors.black45),
+                    noteModel.desc,
+                    style: const TextStyle(fontSize: 16, color: Colors.black45),
                   ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(right: 24),
+              Padding(
+                padding: const EdgeInsets.only(right: 50),
                 child: Text(
-                  "2024/8/2",
-                  style: TextStyle(fontSize: 14, color: Colors.black45),
+                  noteModel.date,
+                  style: const TextStyle(fontSize: 14, color: Colors.black45),
                 ),
               ),
             ],
